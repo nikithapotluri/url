@@ -52,8 +52,16 @@ export default function ShortenedLinksList({ links }) {
       {paginatedEntries.map(([shortCode, entry]) => (
         <Paper key={shortCode} sx={{ p: 2, mb: 3 }} elevation={3}>
           <Typography variant="h6" gutterBottom>
-            {window.location.origin}/{shortCode}
-          </Typography>
+  <a
+    href={`${window.location.origin}/${shortCode}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ textDecoration: "none", color: "#1976d2" }}
+  >
+    {window.location.origin}/{shortCode}
+  </a>
+</Typography>
+
           <Typography variant="body1">
             <strong>Original URL:</strong>{" "}
             <MuiLink href={entry.originalUrl} target="_blank" rel="noopener noreferrer">

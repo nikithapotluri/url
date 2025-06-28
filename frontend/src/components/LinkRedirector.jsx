@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function LinkRedirector() {
   const { shortCode } = useParams();
-  const [redirectUrl, setRedirectUrl] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -22,7 +21,7 @@ export default function LinkRedirector() {
     }
 
     // Get coarse location (optional, fallback to 'Unknown')
-    fetch("https://ipinfo.io/json?token=YOUR_TOKEN") // Optional token
+    fetch("https://ipinfo.io/json?token=YOUR_TOKEN") // Replace with token or remove
       .then((res) => res.json())
       .then((data) => {
         const clickDetails = {
@@ -37,10 +36,10 @@ export default function LinkRedirector() {
         allLinks[shortCode] = matchedLink;
         localStorage.setItem("affordmedLinks", JSON.stringify(allLinks));
 
-        setRedirectUrl(matchedLink.originalUrl);
+        // ✅ External redirect
+        window.location.href = matchedLink.originalUrl;
       })
       .catch(() => {
-        // Fallback logging without location
         matchedLink.clickEvents = [...(matchedLink.clickEvents || []), {
           time: now.toISOString(),
           referrer: document.referrer || "Direct",
@@ -49,12 +48,10 @@ export default function LinkRedirector() {
         allLinks[shortCode] = matchedLink;
         localStorage.setItem("affordmedLinks", JSON.stringify(allLinks));
 
-        setRedirectUrl(matchedLink.originalUrl);
+        // ✅ External redirect fallback
+        window.location.href = matchedLink.originalUrl;
       });
   }, [shortCode]);
 
-  if (error) return <div style={{ padding: 20 }}>{error}</div>;
-  if (redirectUrl) return <Navigate to={redirectUrl} />;
-
-  return <div style={{ padding: 20 }}>Redirecting...</div>;
+  return <div style={{ padding: 20 }}>{error ? error : "Redirecting..."}</div>;
 }
